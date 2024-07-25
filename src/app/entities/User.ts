@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+} from "typeorm";
+import { Session } from "./Session";
+import { Configurations } from "./Configuration";
 
 @Entity()
 export class User {
@@ -6,11 +14,23 @@ export class User {
   id!: number;
 
   @Column()
-  firstName!: string;
+  username!: string;
 
   @Column()
-  lastName!: string;
+  email!: string;
 
   @Column()
-  age!: number;
+  passwordHash!: number;
+
+  @Column()
+  createdAt!: Date;
+
+  @Column()
+  updatedAt!: Date;
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions!: Session[];
+
+  @OneToOne(() => Configurations, (configuration) => configuration.user)
+  configuration!: Configurations;
 }
