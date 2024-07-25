@@ -3,13 +3,6 @@ import WebSocket, { WebSocketServer } from "ws";
 
 const wss = new WebSocketServer({ noServer: true });
 
-wss.on("connection", (ws) => {
-  ws.on("message", (message) => {
-    console.log("received:", message);
-    ws.send(`Hello, you sent -> ${message}`);
-  });
+const userSockets = new Map<number, WebSocket>(); // caching user IDs to WebSocket connections, 
 
-  ws.send("Hi there, I am a WebSocket server");
-});
-
-export { wss };
+export { wss, userSockets };
