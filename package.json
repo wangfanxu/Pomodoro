@@ -1,0 +1,28 @@
+{
+  "name": "pomodoro",
+  "version": "1.0.0",
+  "description": "hello",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest test",
+    "dev": "npx nodemon",
+    "build": "tsc",
+    "build --watch":"tsc --watch",
+    "start": "node dist/app/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "ts-jest": "^29.2.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
