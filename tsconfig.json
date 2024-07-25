@@ -4,7 +4,10 @@
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "module": "commonjs"
   },
   "include": ["src/**/*"]
 }
