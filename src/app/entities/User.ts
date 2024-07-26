@@ -42,3 +42,5 @@ export class User {
   @OneToOne(() => Configuration, (configuration) => configuration.user)
   configuration!: Configuration;
 }
+
+export type user = User;

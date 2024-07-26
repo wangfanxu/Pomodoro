@@ -6,24 +6,22 @@ export class Session {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  startTime!: Date;
+  @Column({ name: "start_time", type: "timestamp", nullable: true })
+  startTime!: Date | null;
 
-  @Column()
-  endTime!: Date;
+  @Column({ name: "end_time", type: "timestamp", nullable: true })
+  endTime!: Date | null;
 
-  @Column()
-  status!: string;
+  @Column({ name: "duration", type: "int", nullable: false })
+  duration!: number;
 
-  @Column()
-  createdAt!: Date;
-
-  @Column()
-  updatedAt!: Date;
+  @Column({
+    type: "enum",
+    enum: ["pending", "in_progress", "paused", "completed"],
+    default: "pending",
+  })
+  status!: "pending" | "in_progress" | "paused" | "completed";
 
   @ManyToOne(() => User, (user) => user.sessions)
   user!: User;
-
-  @Column()
-  userId!: number;
 }
