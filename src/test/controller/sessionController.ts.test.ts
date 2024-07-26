@@ -7,7 +7,8 @@ describe("session controller test suite", () => {
   let requestStub = {};
   let responseStub = {
     status: jest.fn().mockReturnThis(),
-    send: jest.fn(),
+    send: jest.fn().mockReturnThis(),
+    json: jest.fn().mockReturnThis(),
   };
 
   beforeEach(() => {
@@ -22,6 +23,7 @@ describe("session controller test suite", () => {
     requestStub = {
       body: {
         userId: "testId",
+        sessionType: "work",
       },
     };
     sut(requestStub as any as Request, responseStub as any as Response);
