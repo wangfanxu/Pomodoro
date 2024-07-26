@@ -1,14 +1,15 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { HTTP_CODES } from "../model/serverModel";
 import { Request, Response, NextFunction } from "express";
-import { createSessionSchema } from "../schema/Session";
+import { CreateSession, createSessionSchema } from "../schema/Session";
 import { ZodError } from "zod";
+import { handleCreateSession } from "../services/sessionService";
 
-export const createSession = (req: Request, res: Response) => {
-  let parsedRequestBody;
+export const createSession = async (req: Request, res: Response) => {
   console.log("incoming request obdy", req.body);
   try {
-    parsedRequestBody = createSessionSchema.parse(req.body);
+    const parsedRequestBody = createSessionSchema.parse(req.body);
+    await handleCreateSession(parsedRequestBody);
   } catch (error) {
     console.log("error catched", req.body);
     if (error instanceof ZodError) {
@@ -20,7 +21,6 @@ export const createSession = (req: Request, res: Response) => {
       return;
     }
   }
-  console.log("parsed request body", parsedRequestBody);
 
   res.status(HTTP_CODES.CREATED).send();
 };

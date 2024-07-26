@@ -6,31 +6,39 @@ import {
   OneToOne,
 } from "typeorm";
 import { Session } from "./Session";
-import { Configurations } from "./Configuration";
+import { Configuration } from "./Configuration";
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({
+    type: String,
+    unique: true,
+    nullable: true,
+  })
   username!: string;
 
-  @Column()
+  @Column({
+    type: String,
+    unique: true,
+    nullable: true,
+  })
   email!: string;
 
-  @Column()
-  passwordHash!: number;
+  @Column({ name: "password_hash", type: String, unique: true, nullable: true })
+  passwordHash!: string;
 
-  @Column()
+  @Column({ name: "created_at" })
   createdAt!: Date;
 
-  @Column()
+  @Column({ name: "updated_at" })
   updatedAt!: Date;
 
   @OneToMany(() => Session, (session) => session.user)
   sessions!: Session[];
 
-  @OneToOne(() => Configurations, (configuration) => configuration.user)
-  configuration!: Configurations;
+  @OneToOne(() => Configuration, (configuration) => configuration.user)
+  configuration!: Configuration;
 }

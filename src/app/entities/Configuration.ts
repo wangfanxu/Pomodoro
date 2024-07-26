@@ -1,28 +1,27 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
-import { Session } from "./Session";
 import { User } from "./User";
 
 @Entity()
-export class Configurations {
+export class Configuration {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({name:"work_interval"})
   workInterval!: number;
 
-  @Column()
+  @Column({name:"short_break"})
   shortBreak!: number;
 
-  @Column()
+  @Column(({name:"long_break"}))
   longBreak!: number;
 
-  @Column()
+  @Column({name:"long_break_interval"})
   longBreakInterval!: number;
 
-  @Column()
+  @Column({name:"created_at"})
   createdAt!: Date;
 
-  @Column()
+  @Column({name:"updated_at"})
   updatedAt!: Date;
 
   @OneToOne(() => User, (user) => user.configuration)
