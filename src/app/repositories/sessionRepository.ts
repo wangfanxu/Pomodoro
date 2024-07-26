@@ -10,7 +10,16 @@ export const getSession = async (sessionId: number) => {
   });
 };
 
-export const createSession = async (
+export const updateSession = async (
+  sessionId: number,
+  updatedFields: Partial<Session>
+) => {
+  const connection = await ConnectionManager.getInstance();
+  const sessionRepo = connection.getRepository(Session);
+  return sessionRepo.update(sessionId, updatedFields);
+};
+
+export const createSessionBySessionType = async (
   userWithConfiguration: user,
   sessionType: "work" | "shortBreak" | "longBreak"
 ) => {
@@ -26,14 +35,20 @@ export const createSession = async (
       duration = userWithConfiguration.configuration.longBreak;
   }
 
+  console.log("duration", duration);
+
   const session = new Session();
   const connection = await ConnectionManager.getInstance();
   const sessionRepo = connection.getRepository(Session);
+  const now = new Date();
+  const endTime = new Date(now);
+  endTime.setMinutes(now.getMinutes() + duration);
 
-  session.startTime = new Date();
+  session.startTime = now;
   session.duration = duration;
   session.status = "in_progress";
   session.user = userWithConfiguration;
+  session.endTime = endTime;
 
   return sessionRepo.save(session);
 };

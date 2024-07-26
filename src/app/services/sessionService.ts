@@ -1,12 +1,13 @@
 import { Configuration } from "../entities/Configuration";
 import { User } from "../entities/User";
-import { createSession } from "../repositories/sessionRepository";
+import { createSessionBySessionType } from "../repositories/sessionRepository";
 import {
   getUser,
   getUserWithConfiguration,
 } from "../repositories/userRepository";
 import { CreateSession } from "../schema/Session";
 import ConnectionManager from "../utils/connection";
+import { scheduleCountdownJob } from "../utils/scheduler";
 
 const defaultConfiguration = {
   workInterval: 4,
@@ -30,10 +31,13 @@ export const handleCreateSession = async (session: CreateSession) => {
     user.configuration = defaultConfiguration;
   }
 
-  console.log("before create session");
-  const createdSession = await createSession(user, session.sessionType);
-  console.log("createdSession", createdSession);
-
   //create session
+  console.log("before create session");
+  const createdSession = await createSessionBySessionType(
+    user,
+    session.sessionType
+  );
+
   //start new job to count down
+  scheduleCountdownJob(createdSession);
 };

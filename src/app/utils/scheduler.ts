@@ -1,46 +1,90 @@
-// // src/scheduler.ts
-// import cron from "node-cron";
-// import { getRepository } from "typeorm";
-// import { Session } from "./entity/Session";
+import cron, { ScheduledTask } from "node-cron";
+// import notifier from "node-notifier";
+import { Session } from "../entities/Session";
+import { getSession, updateSession } from "../repositories/sessionRepository";
 
-// const WORK_INTERVAL = 25 * 60 * 1000; // 25 minutes
+type JobManager = {
+  [sessionId: number]: ScheduledTask;
+};
 
-// cron.schedule("* * * * *", async () => {
-//   console.log("Running scheduled job to check expired timers");
+const jobManager: JobManager = {};
+export const scheduleCountdownJob = (session: Session) => {
+  console.log("start schedule countdown job for ", session.id);
+  // Calculate the cron expression for the job (runs once after the session's duration)
+  const endTime = session.endTime;
+  if (!endTime) throw Error("end time not declared");
+  const cronTime = `${endTime.getSeconds()} ${endTime.getMinutes()} ${endTime.getHours()} ${endTime.getDate()} ${
+    endTime.getMonth() + 1
+  } *`;
 
-//   const sessionRepository = getRepository(Session);
+  // Schedule the job
+  const job = cron.schedule(cronTime, async () => {
+    console.log("start job execute");
+    await updateSession(session.id, {
+      status: "completed",
+    });
+    // Send notification to user
+    delete jobManager[session.id];
+  });
 
-//   const now = new Date();
-//   const activeSessions = await sessionRepository.find({
-//     where: {
-//       end_time: null,
-//       status: "active",
-//       start_time: LessThan(now),
-//     },
+  // Store the job in the job manager
+  jobManager[session.id] = job;
+};
+
+// Function to stop a job
+export const stopJob = async (sessionId: number) => {
+  const job = jobManager[sessionId];
+  if (job) {
+    job.stop();
+    await updateSession(sessionId, {
+      status: "paused",
+    });
+  } else {
+    throw new Error(`No job found for session ID ${sessionId}`);
+  }
+};
+
+// Function to resume a job
+export async function resumeJob(sessionId: number) {
+  const session = await getSession(sessionId);
+  if (!session) {
+    throw new Error(`Session with ID ${sessionId} not found`);
+  }
+
+  if (!session.endTime) {
+    throw Error(`end time is not defined with ID ${sessionId}`);
+  }
+
+  const remainingDuration =
+    (session.endTime.getTime() - new Date().getTime()) / 1000;
+  if (remainingDuration > 0) {
+    scheduleCountdownJob({ ...session, duration: remainingDuration });
+  } else {
+    throw new Error("Session has already ended or has negative remaining time");
+  }
+}
+
+// Function to send notification to user
+// function sendNotification(user: User, session: Session) {
+//   notifier.notify({
+//     title: "Pomodoro Timer",
+//     message: `Your session has ended. Time to take a break!`,
+//   });
+// }
+
+// // Usage example
+// createNewSession(1, 25 * 60) // 25 minutes
+//   .then((session) => {
+//     console.log("New session created:", session);
+//   })
+//   .catch((error) => {
+//     console.error(error);
 //   });
 
-//   for (const session of activeSessions) {
-//     const sessionStartTime = new Date(session.start_time);
-//     const elapsed = now.getTime() - sessionStartTime.getTime();
-
-//     if (elapsed >= WORK_INTERVAL) {
-//       session.end_time = now;
-//       session.status = "completed";
-//       await sessionRepository.save(session);
-//     }
-
-//     const userSocket = userSockets.get(session.user_id);
-
-//     if (userSocket) {
-//       userSocket.send(
-//         JSON.stringify({
-//           type: "notification",
-//           message: "Your timer has ended!",
-//         })
-//       );
-//     }
-
-//     // Notify client about session end
-//     // Here, you would typically use WebSocket or another method to send a notification
-//   }
-// });
+// // Example stopping and resuming a job
+// setTimeout(() => {
+//   stopJob(1); // Stop job with session ID 1
+//   setTimeout(() => {
+//     resumeJob(1); // Resume job with session ID 1 after 10 seconds
+//   }, 10000);
+// }, 10000);
