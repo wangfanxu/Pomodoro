@@ -2,6 +2,7 @@ import cron, { ScheduledTask } from "node-cron";
 // import notifier from "node-notifier";
 import { Session } from "../entities/Session";
 import { getSession, updateSession } from "../repositories/sessionRepository";
+import { userSockets } from "../websocket";
 
 type JobManager = {
   [sessionId: number]: ScheduledTask;
@@ -23,6 +24,7 @@ export const scheduleCountdownJob = (session: Session) => {
     await updateSession(session.id, {
       status: "completed",
     });
+    sendNotification(session.user.id, `${session.user.id} times up!`);
     // Send notification to user
     delete jobManager[session.id];
   });
@@ -61,6 +63,17 @@ export async function resumeJob(sessionId: number) {
     scheduleCountdownJob({ ...session, duration: remainingDuration });
   } else {
     throw new Error("Session has already ended or has negative remaining time");
+  }
+}
+
+function sendNotification(userId: number, message: string) {
+  const ws = userSockets.get(userId);
+
+  if (!ws) {
+    console.warn("no websocket established, skip for userId", userId);
+  }
+  if (ws) {
+    ws.send(message);
   }
 }
 

@@ -1,25 +1,26 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html>
-<head>
-  <title>WebSocket Client</title>
-</head>
-<body>
-  <script>
-    const ws = new WebSocket('ws://localhost:3000');
+  <head>
+    <title>WebSocket Client</title>
+  </head>
+  <body>
+    <script>
+      const userId = 16; // Example user ID
+      const ws = new WebSocket(`ws://localhost:3000?user-id=${userId}`);
 
-    ws.onopen = () => {
-      console.log('Connected to the WebSocket server');
-      ws.send('Hello Server!');
-    };
+      ws.onopen = () => {
+        console.log("Connected to the WebSocket server");
+        ws.send("Hello Server!");
+      };
 
-    ws.onmessage = (event) => {
-      console.log('Message from server:', event.data);
-    };
+      ws.onmessage = (event) => {
+        console.log("Message from server:", event.data);
+      };
 
-    ws.onclose = () => {
-      console.log('Disconnected from the WebSocket server');
-    };
-  </script>
-</body>
+      ws.onclose = () => {
+        console.log("Disconnected from the WebSocket server");
+      };
+    </script>
+  </body>
 </html>
