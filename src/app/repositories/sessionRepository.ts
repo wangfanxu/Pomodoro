@@ -12,6 +12,12 @@ export const getSession = async (sessionId: number) => {
   });
 };
 
+export const getSessionsByCycle = async (cycle: Cycle) => {
+  const connection = await ConnectionManager.getInstance();
+  const sessionRepo = connection.getRepository(Session);
+  return sessionRepo.find({ where: { cycle: cycle } });
+};
+
 export const updateSession = async (
   sessionId: number,
   updatedFields: Partial<Session>

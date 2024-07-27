@@ -1,12 +1,16 @@
 import { Configuration } from "../entities/Configuration";
 import { Cycle } from "../entities/Cycle";
 import { Session } from "../entities/Session";
+import { User } from "../entities/User";
 import {
   createCycle,
   getUserUncompletedCycles,
   updateCycle,
 } from "../repositories/cycleRepository";
-import { createSessionBySessionType } from "../repositories/sessionRepository";
+import {
+  createSessionBySessionType,
+  getSessionsByCycle,
+} from "../repositories/sessionRepository";
 import { getUserWithConfiguration } from "../repositories/userRepository";
 import { CreateSession } from "../schema/Session";
 import { scheduleCountdownJob, sendNotification } from "../utils/scheduler";
@@ -51,39 +55,52 @@ export const handleCreateSession = async (session: CreateSession) => {
   );
 
   //start new job to count down
-  scheduleCountdownJob(createdSession);
+  scheduleCountdownJob(user, cycle, createdSession);
 };
 
-// async function startNextSession(cycle: Cycle, lastSession: Session) {
-//   //do nothing if cycle already completed
-//   if (cycle.completed) return;
-//   let nextSessionType: "work" | "short_break" | "long_break";
+export async function startNextSession(
+  user: User,
+  cycle: Cycle,
+  lastSession: Session
+) {
+  //do nothing if cycle already completed
+  if (cycle.completed) return;
+  let nextSessionType: "work" | "short_break" | "long_break";
+  const sessions = await getSessionsByCycle(cycle);
 
-//   switch (lastSession.type) {
-//     case "work":
-//       const numberOfWorkCompleted = cycle.sessions.filter(
-//         (session) => (session.type = "work")
-//       ).length;
-//       if (
-//         numberOfWorkCompleted === cycle.user.configuration.longBreakInterval
-//       ) {
-//         await createSessionBySessionType(cycle.user, "longBreak");
-//       } else {
-//         await createSessionBySessionType(cycle.user, "shortBreak");
-//       }
+  switch (lastSession.type) {
+    case "work":
+      const numberOfWorkCompleted = sessions.filter(
+        (session) => (session.type = "work")
+      ).length;
+      if (numberOfWorkCompleted === user.configuration.longBreakInterval) {
+        const createdSession = await createSessionBySessionType(
+          user,
+          "longBreak",
+          cycle
+        );
+        scheduleCountdownJob(user, cycle, createdSession);
+      } else {
+        const createdSession = await createSessionBySessionType(
+          user,
+          "shortBreak",
+          cycle
+        );
+        scheduleCountdownJob(user, cycle, createdSession);
+      }
 
-//     case "short_break":
-//       await createSessionBySessionType(cycle.user, "work");
-//     case "long_break":
-//       await updateCycle(cycle.id, {
-//         completed: true,
-//       });
-//       sendNotification(
-//         cycle.user.id,
-//         "your have finished a pomodoro cycle, congratulation!"
-//       );
-//   }
-// }
+    case "shortBreak":
+      await createSessionBySessionType(user, "work", cycle);
+    case "longBreak":
+      await updateCycle(cycle.id, {
+        completed: true,
+      });
+      sendNotification(
+        cycle.user.id,
+        "your have finished a pomodoro cycle, congratulation!"
+      );
+  }
+}
 
 // function getSessionDuration(
 //   sessionType: "work" | "short_break" | "long_break",

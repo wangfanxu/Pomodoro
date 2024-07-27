@@ -50,9 +50,9 @@ INSERT INTO configuration (
         user_id
     )
 VALUES (
-        25,
-        5,
-        15,
+        1,
+        1,
+        1,
         4,
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP,

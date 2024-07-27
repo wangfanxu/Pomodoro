@@ -3,13 +3,20 @@ import cron, { ScheduledTask } from "node-cron";
 import { Session } from "../entities/Session";
 import { getSession, updateSession } from "../repositories/sessionRepository";
 import { userSockets } from "../websocket";
+import { User } from "../entities/User";
+import { Cycle } from "../entities/Cycle";
+import { startNextSession } from "../services/sessionService";
 
 type JobManager = {
   [sessionId: number]: ScheduledTask;
 };
 
 const jobManager: JobManager = {};
-export const scheduleCountdownJob = (session: Session) => {
+export const scheduleCountdownJob = (
+  user: User,
+  cycle: Cycle,
+  session: Session
+) => {
   console.log("start schedule countdown job for ", session.id);
   // Calculate the cron expression for the job (runs once after the session's duration)
   const endTime = session.endTime;
@@ -24,6 +31,7 @@ export const scheduleCountdownJob = (session: Session) => {
     await updateSession(session.id, {
       status: "completed",
     });
+    startNextSession(user, cycle, session);
     sendNotification(session.user.id, `${session.user.id} times up!`);
     // Send notification to user
     delete jobManager[session.id];
@@ -47,24 +55,24 @@ export const stopJob = async (sessionId: number) => {
 };
 
 // Function to resume a job
-export async function resumeJob(sessionId: number) {
-  const session = await getSession(sessionId);
-  if (!session) {
-    throw new Error(`Session with ID ${sessionId} not found`);
-  }
+// export async function resumeJob(sessionId: number) {
+//   const session = await getSession(sessionId);
+//   if (!session) {
+//     throw new Error(`Session with ID ${sessionId} not found`);
+//   }
 
-  if (!session.endTime) {
-    throw Error(`end time is not defined with ID ${sessionId}`);
-  }
+//   if (!session.endTime) {
+//     throw Error(`end time is not defined with ID ${sessionId}`);
+//   }
 
-  const remainingDuration =
-    (session.endTime.getTime() - new Date().getTime()) / 1000;
-  if (remainingDuration > 0) {
-    scheduleCountdownJob({ ...session, duration: remainingDuration });
-  } else {
-    throw new Error("Session has already ended or has negative remaining time");
-  }
-}
+//   const remainingDuration =
+//     (session.endTime.getTime() - new Date().getTime()) / 1000;
+//   if (remainingDuration > 0) {
+//     scheduleCountdownJob({ ...session, duration: remainingDuration });
+//   } else {
+//     throw new Error("Session has already ended or has negative remaining time");
+//   }
+// }
 
 export function sendNotification(userId: number, message: string) {
   const ws = userSockets.get(userId);
