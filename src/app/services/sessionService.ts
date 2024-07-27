@@ -65,15 +65,18 @@ export async function startNextSession(
 ) {
   //do nothing if cycle already completed
   if (cycle.completed) return;
-  let nextSessionType: "work" | "short_break" | "long_break";
+  console.log("cycle", cycle);
   const sessions = await getSessionsByCycle(cycle);
+
+  console.log("retrieved sessions", sessions);
 
   switch (lastSession.type) {
     case "work":
       const numberOfWorkCompleted = sessions.filter(
         (session) => (session.type = "work")
       ).length;
-      if (numberOfWorkCompleted === user.configuration.longBreakInterval) {
+      console.log("length of works", numberOfWorkCompleted);
+      if (numberOfWorkCompleted >= user.configuration.longBreakInterval) {
         const createdSession = await createSessionBySessionType(
           user,
           "longBreak",
