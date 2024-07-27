@@ -1,6 +1,8 @@
+import { Cycle } from "../entities/Cycle";
 import { Session } from "../entities/Session";
 import { user } from "../entities/User";
 import ConnectionManager from "../utils/connection";
+import { getUserUncompletedCycles } from "./cycleRepository";
 
 export const getSession = async (sessionId: number) => {
   const connection = await ConnectionManager.getInstance();
@@ -21,7 +23,8 @@ export const updateSession = async (
 
 export const createSessionBySessionType = async (
   userWithConfiguration: user,
-  sessionType: "work" | "shortBreak" | "longBreak"
+  sessionType: "work" | "shortBreak" | "longBreak",
+  uncompletedCycle: Cycle
 ) => {
   let duration;
 
@@ -49,6 +52,8 @@ export const createSessionBySessionType = async (
   session.status = "in_progress";
   session.user = userWithConfiguration;
   session.endTime = endTime;
+  session.cycle = uncompletedCycle;
+  session.type = sessionType;
 
   return sessionRepo.save(session);
 };

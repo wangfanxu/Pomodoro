@@ -66,7 +66,7 @@ export async function resumeJob(sessionId: number) {
   }
 }
 
-function sendNotification(userId: number, message: string) {
+export function sendNotification(userId: number, message: string) {
   const ws = userSockets.get(userId);
 
   if (!ws) {

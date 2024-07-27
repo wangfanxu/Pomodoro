@@ -4,9 +4,12 @@ import {
   Column,
   OneToMany,
   OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
-import { Session } from "./Session";
 import { Configuration } from "./Configuration";
+import { Cycle } from "./Cycle";
+import { Session } from "./Session";
 
 @Entity()
 export class User {
@@ -30,11 +33,14 @@ export class User {
   @Column({ name: "password_hash", type: String, unique: true, nullable: true })
   passwordHash!: string;
 
-  @Column({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;
 
-  @Column({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt!: Date;
+
+  @OneToMany(() => Cycle, (cycle) => cycle.user)
+  cycles!: Cycle[];
 
   @OneToMany(() => Session, (session) => session.user)
   sessions!: Session[];

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { User } from "./User";
+import { Cycle } from "./Cycle";
 
 @Entity()
 export class Session {
@@ -19,8 +20,18 @@ export class Session {
     type: "enum",
     enum: ["pending", "in_progress", "paused", "completed"],
     default: "pending",
+    nullable: false,
   })
   status!: "pending" | "in_progress" | "paused" | "completed";
+
+  @Column({
+    type: "enum",
+    enum: ["work", "shortBreak", "longBreak"],
+  })
+  type!: "work" | "shortBreak" | "longBreak";
+
+  @ManyToOne(() => Cycle, (cycle) => cycle.sessions)
+  cycle!: Cycle;
 
   @ManyToOne(() => User, (user) => user.sessions)
   user!: User;
