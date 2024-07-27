@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { HTTP_CODES } from "../model/serverModel";
+import { HTTP_CODES } from "../const/serverModel";
 import { Request, Response, NextFunction } from "express";
 import { CreateSession, createSessionSchema } from "../schema/Session";
 import { ZodError } from "zod";

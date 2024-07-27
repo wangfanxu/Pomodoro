@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { createSession } from "../../app/controllers/sessionController";
-import { HTTP_CODES } from "../../app/model/serverModel";
+import { HTTP_CODES } from "../../app/const/serverModel";
 import { Request, Response } from "express";
 describe("session controller test suite", () => {
   let sut: typeof createSession;
