@@ -88,9 +88,17 @@ export async function startNextSession(
         );
         scheduleCountdownJob(user, cycle, createdSession);
       }
+      break;
 
     case "shortBreak":
-      await createSessionBySessionType(user, "work", cycle);
+      const createdSession = await createSessionBySessionType(
+        user,
+        "work",
+        cycle
+      );
+      scheduleCountdownJob(user, cycle, createdSession);
+      break;
+
     case "longBreak":
       await updateCycle(cycle.id, {
         completed: true,
@@ -99,6 +107,7 @@ export async function startNextSession(
         cycle.user.id,
         "your have finished a pomodoro cycle, congratulation!"
       );
+      break;
   }
 }
 
