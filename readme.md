@@ -3,13 +3,13 @@
 This project is a Pomodoro Timer application built with Node.js, TypeScript, TypeORM,Zod and WebSocket. It allows users to manage their Pomodoro cycles, track work sessions, short breaks, and long breaks, and receive real-time notifications upon session completion.
 
 ## Features
-Input params validation: Zod validation
-Pomodoro Cycles: Manage multiple Pomodoro cycles and sessions.
-Session Management: Start, stop, resume, and complete sessions with automatic scheduling.
-Real-time Notifications: Receive real-time notifications via WebSocket.
-REST API: Comprehensive REST API for managing users, cycles, and sessions.
-Database Integration: Persistent storage using PostgreSQL and TypeORM.
-Configurable Timers: Users can set and update timer configurations.
+1. Input params validation: Zod validation
+2. Pomodoro Cycles: Manage multiple Pomodoro cycles and sessions.
+3. Session Management: Start, stop, resume, and complete sessions with automatic scheduling.
+4. Real-time Notifications: Receive real-time notifications via WebSocket.
+5. REST API: Comprehensive REST API for managing users, cycles, and sessions.
+6. Database Integration: Persistent storage using PostgreSQL and TypeORM.
+7. Configurable Timers: Users can set and update timer configurations.
 
 ## Getting Started
 ### Prerequisites
@@ -24,7 +24,7 @@ docker-compose up
 
 Application will be running on 3000, or sql on 5432
 
-**WARNING**
+### Testing Data
 By default once application is up, all the table are empty.
 You have to insert the testing users&configurations into tables
 There is a **init.sql** included in this repo, you can simply execute it from postgresql.
