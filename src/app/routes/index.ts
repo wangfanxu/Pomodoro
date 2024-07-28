@@ -9,7 +9,7 @@ import { setUserConfiguration } from "../controllers/configController";
 const router = Router();
 
 router.post("/sessions", createSession);
-router.get("/sessions/:id", getSession);
+router.get("/users/:userId/cycles/:cycleId/sessions/:sessionId", getSession);
 //handle stop or resume
 router.patch(
   "/users/:userId/cycles/:cycleId/sessions/:sessionId/status",

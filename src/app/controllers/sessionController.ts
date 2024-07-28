@@ -33,13 +33,13 @@ export const createSession = async (req: Request, res: Response) => {
 };
 
 export const getSession = async (req: Request, res: Response) => {
-  if (!req.params.id) {
+  if (!req.params.sessionId) {
     res.status(400).json({
       status: "error",
       message: "id is required",
     });
   }
-  const session = await getSessionById(Number(req.params.id));
+  const session = await getSessionById(Number(req.params.sessionId));
   res.status(HTTP_CODES.OK).json({
     status: "success",
     ...session,
