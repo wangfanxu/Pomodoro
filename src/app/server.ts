@@ -5,12 +5,15 @@ import { createServer } from "http";
 import router from "./routes";
 import ConnectionManager from "./utils/connection";
 import { wss } from "./websocket";
+import * as dotenv from "dotenv";
 
 const app = express();
 const PORT = 3000;
+dotenv.config();
 
 (async () => {
   try {
+    console.log("env", process.env);
     await ConnectionManager.getInstance();
     console.log("Database connection established");
 

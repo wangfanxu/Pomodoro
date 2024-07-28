@@ -7,7 +7,8 @@
     "useUnknownInCatchVariables": false,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "module": "commonjs"
+    "module": "commonjs",
+    "target": "ES6"
   },
   "include": ["src/**/*"]
 }
