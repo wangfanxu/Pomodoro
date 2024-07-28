@@ -5,6 +5,7 @@ const createSessionSchema = z.object({
   sessionType: z.enum(["work", "shortBreak", "longBreak"]),
 });
 
+
 export const updateSessionParamSchema = z.object({
   userId: z.string(),
   sessionId: z.string(),

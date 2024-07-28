@@ -1,4 +1,4 @@
-import { CreateSession } from "../../app/schema/Session";
+import { CreateSession } from "../../app/schema/sessionSchema";
 import { handleCreateSession } from "../../app/services/sessionService";
 
 describe("session service test suites", () => {

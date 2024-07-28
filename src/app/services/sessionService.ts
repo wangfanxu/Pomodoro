@@ -15,7 +15,7 @@ import {
   updateSession,
 } from "../repositories/sessionRepository";
 import { getUserWithConfiguration } from "../repositories/userRepository";
-import { CreateSession } from "../schema/Session";
+import { CreateSession } from "../schema/sessionSchema";
 import {
   scheduleCountdownJob,
   sendNotification,

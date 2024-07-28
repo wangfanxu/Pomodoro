@@ -7,7 +7,7 @@ import {
   createSessionSchema,
   updateSessionParamSchema,
   updateSessionSchema,
-} from "../schema/Session";
+} from "../schema/sessionSchema";
 import { ZodError } from "zod";
 import {
   handleCreateSession,
