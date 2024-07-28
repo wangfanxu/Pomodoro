@@ -18,8 +18,177 @@ There are total 4 endpoints included:
 3. Update session status, paused or resume: `PATCH /users/:userId/cycles/:cycleId/sessions/:sessionId/status`
 4. Update user configuration: `/users/:userId/configurations`
 
-## Database Design
+## Database Schema
+### Users Table
+Stores information about the users of the Pomodoro Timer application.
 
+| Column        | Data Type | Constraints                         | Description                              |
+| ------------- | --------- | ----------------------------------- | ---------------------------------------- |
+| id            | UUID      | PRIMARY KEY                         | Unique identifier for the user           |
+| username      | VARCHAR   | NOT NULL, UNIQUE                    | Username of the user                     |
+| email         | VARCHAR   | NOT NULL, UNIQUE                    | Email address of the user                |
+| password_hash | VARCHAR   | NOT NULL                            | Hashed password of the user              |
+| created_at    | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the user was created      |
+| updated_at    | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the user was last updated |
+
+### Cycles Table
+Stores information about Pomodoro cycles.
+
+| Column     | Data Type | Constraints                                                  | Description                               |
+| ---------- | --------- | ------------------------------------------------------------ | ----------------------------------------- |
+| id         | UUID      | PRIMARY KEY                                                  | Unique identifier for the cycle           |
+| completed  | UUID      | NOT NULL, DEFAULT FALSE                                      | Status of current cycle                   |
+| user_id    | UUID      | NOT NULL, FOREIGN KEY REFERENCES Users(id) ON DELETE CASCADE | ID of the user who owns the cycle         |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the cycle was created      |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the cycle was last updated |
+
+### Sessions Table
+Stores information about individual Pomodoro sessions.
+
+| Column     | Data Type | Constraints                                                   | Description                                                   |
+| ---------- | --------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
+| id         | UUID      | PRIMARY KEY                                                   | Unique identifier for the session                             |
+| cycle_id   | UUID      | NOT NULL, FOREIGN KEY REFERENCES Cycles(id) ON DELETE CASCADE | ID of the cycle to which the session belongs                  |
+| status     | VARCHAR   | NOT NULL                                                      | Status of the session (e.g., "active", "paused", "completed") |
+| start_time | TIMESTAMP | NOT NULL                                                      | Timestamp when the session started                            |
+| end_time   | TIMESTAMP |                                                               | Timestamp when the session ended                              |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                           | Timestamp when the session was created                        |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                           | Timestamp when the session was last updated                   |
+
+### Configurations Table
+Stores user-specific configuration settings for Pomodoro intervals.
+
+| Column              | Data Type | Constraints                                                  | Description                                       |
+| ------------------- | --------- | ------------------------------------------------------------ | ------------------------------------------------- |
+| id                  | UUID      | PRIMARY KEY                                                  | Unique identifier for the configuration           |
+| user_id             | UUID      | NOT NULL, FOREIGN KEY REFERENCES Users(id) ON DELETE CASCADE | ID of the user who owns the configuration         |
+| work_interval       | INTEGER   | NOT NULL                                                     | Duration of the work interval (in minutes)        |
+| short_break         | INTEGER   | NOT NULL                                                     | Duration of the short break (in minutes)          |
+| long_break          | INTEGER   | NOT NULL                                                     | Duration of the long break (in minutes)           |
+| long_break_interval | INTEGER   | NOT NULL                                                     | Number of work intervals before a long break      |
+| created_at          | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the configuration was created      |
+| updated_at          | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the configuration was last updated |
+
+## Relationships
+
+- **User and Cycles:**
+  - One-to-Many relationship.
+  - Each user can have multiple cycles.
+
+- **Cycle and Sessions:**
+  - One-to-Many relationship.
+  - Each cycle can have multiple sessions.
+
+- **User and Configurations:**
+  - One-to-One relationship.
+  - Each user has one configuration.
+
+## Example SQL Script for Initial Data
+
+```sql
+-- Insert users
+INSERT INTO "user" (
+        username,
+        email,
+        password_hash,
+        created_at,
+        updated_at
+    )
+VALUES (
+        'testuser1',
+        'testuser1@example.com',
+        'passwordhash1',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        'testuser2',
+        'testuser2@example.com',
+        'passwordhash2',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        'testuser3',
+        'testuser3@example.com',
+        'passwordhash3',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        'testuser4',
+        'testuser4@example.com',
+        'passwordhash4',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    ),
+    (
+        'testuser5',
+        'testuser5@example.com',
+        'passwordhash5',
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP
+    );
+INSERT INTO configuration (
+        work_interval,
+        short_break,
+        long_break,
+        long_break_interval,
+        created_at,
+        updated_at,
+        user_id
+    )
+VALUES (
+        1,
+        1,
+        1,
+        4,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        1
+    ),
+    -- For testuser1
+    (
+        25,
+        5,
+        15,
+        4,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        2
+    ),
+    -- For testuser2
+    (
+        25,
+        5,
+        15,
+        4,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        3
+    ),
+    -- For testuser3
+    (
+        25,
+        5,
+        15,
+        4,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        4
+    ),
+    -- For testuser4
+    (
+        25,
+        5,
+        15,
+        4,
+        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP,
+        5
+    );
+-- For testuser5
+```
 
 ## Getting Started
 ### Prerequisites
