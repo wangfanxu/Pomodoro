@@ -2,6 +2,15 @@ import { Cycle } from "../entities/Cycle";
 import { User } from "../entities/User";
 import ConnectionManager from "../utils/connection";
 
+export const getCycleById = async (cycleId: number) => {
+  const connection = await ConnectionManager.getInstance();
+  const cycleRepo = connection.getRepository(Cycle);
+  return cycleRepo.findOneBy({
+    id: cycleId,
+  });
+};
+
+
 export const updateCycle = async (
   cycleId: number,
   updatedFields: Partial<Cycle>

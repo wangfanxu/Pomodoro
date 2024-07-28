@@ -1,7 +1,10 @@
 import cron, { ScheduledTask } from "node-cron";
 // import notifier from "node-notifier";
 import { Session } from "../entities/Session";
-import { getSession, updateSession } from "../repositories/sessionRepository";
+import {
+  getSessionById,
+  updateSession,
+} from "../repositories/sessionRepository";
 import { userSockets } from "../websocket";
 import { User } from "../entities/User";
 import { Cycle } from "../entities/Cycle";
@@ -48,31 +51,28 @@ export const stopJob = async (sessionId: number) => {
     job.stop();
     await updateSession(sessionId, {
       status: "paused",
+      stopTime: new Date(),
     });
+
+    console.log(`job stopped for id:${sessionId}`);
   } else {
-    throw new Error(`No job found for session ID ${sessionId}`);
+    console.warn("no job found!");
   }
 };
 
 // Function to resume a job
-// export async function resumeJob(sessionId: number) {
-//   const session = await getSession(sessionId);
-//   if (!session) {
-//     throw new Error(`Session with ID ${sessionId} not found`);
-//   }
+export async function resumeJob(user: User, session: Session, cycle: Cycle) {
+  if (!session.endTime || !session.stopTime)
+    throw Error("end time and stopped time is required to resume session");
 
-//   if (!session.endTime) {
-//     throw Error(`end time is not defined with ID ${sessionId}`);
-//   }
-
-//   const remainingDuration =
-//     (session.endTime.getTime() - new Date().getTime()) / 1000;
-//   if (remainingDuration > 0) {
-//     scheduleCountdownJob({ ...session, duration: remainingDuration });
-//   } else {
-//     throw new Error("Session has already ended or has negative remaining time");
-//   }
-// }
+  const remainingDuration =
+    (session.endTime.getTime() - session.stopTime.getTime()) / 1000;
+  if (remainingDuration > 0) {
+    // scheduleCountdownJob({ ...session, duration: remainingDuration });
+  } else {
+    throw new Error("Session has already ended or has negative remaining time");
+  }
+}
 
 export function sendNotification(userId: number, message: string) {
   const ws = userSockets.get(userId);

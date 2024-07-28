@@ -13,6 +13,9 @@ export class Session {
   @Column({ name: "end_time", type: "timestamp", nullable: true })
   endTime!: Date | null;
 
+  @Column({ name: "stop_time", type: "timestamp", nullable: true })
+  stopTime!: Date | null;
+
   @Column({ name: "duration", type: "int", nullable: false })
   duration!: number;
 

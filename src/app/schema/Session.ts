@@ -5,7 +5,22 @@ const createSessionSchema = z.object({
   sessionType: z.enum(["work", "shortBreak", "longBreak"]),
 });
 
+export const updateSessionParamSchema = z.object({
+  userId: z.string(),
+  sessionId: z.string(),
+  cycleId: z.string(),
+});
+const updateSessionSchema = z.object({
+  status: z.enum(["paused", "resume"]),
+});
 
 type CreateSession = z.infer<typeof createSessionSchema>;
 
-export { createSessionSchema, CreateSession };
+type UpdateSession = z.infer<typeof updateSessionSchema>;
+
+export {
+  createSessionSchema,
+  CreateSession,
+  UpdateSession,
+  updateSessionSchema,
+};

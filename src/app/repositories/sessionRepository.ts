@@ -4,7 +4,7 @@ import { user } from "../entities/User";
 import ConnectionManager from "../utils/connection";
 import { getUserUncompletedCycles } from "./cycleRepository";
 
-export const getSession = async (sessionId: number) => {
+export const getSessionById = async (sessionId: number) => {
   const connection = await ConnectionManager.getInstance();
   const sessionRepo = connection.getRepository(Session);
   return sessionRepo.findOneBy({
