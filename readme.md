@@ -24,7 +24,7 @@ Stores information about the users of the Pomodoro Timer application.
 
 | Column        | Data Type | Constraints                         | Description                              |
 | ------------- | --------- | ----------------------------------- | ---------------------------------------- |
-| id            | UUID      | PRIMARY KEY                         | Unique identifier for the user           |
+| id            | UUID      | PRIMARY KEY, NOT NULL               | Unique identifier for the user           |
 | username      | VARCHAR   | NOT NULL, UNIQUE                    | Username of the user                     |
 | email         | VARCHAR   | NOT NULL, UNIQUE                    | Email address of the user                |
 | password_hash | VARCHAR   | NOT NULL                            | Hashed password of the user              |
@@ -34,46 +34,52 @@ Stores information about the users of the Pomodoro Timer application.
 ### Cycles Table
 Stores information about Pomodoro cycles.
 
-| Column     | Data Type | Constraints                                                  | Description                               |
-| ---------- | --------- | ------------------------------------------------------------ | ----------------------------------------- |
-| id         | UUID      | PRIMARY KEY                                                  | Unique identifier for the cycle           |
-| completed  | UUID      | NOT NULL, DEFAULT FALSE                                      | Status of current cycle                   |
-| user_id    | UUID      | NOT NULL, FOREIGN KEY REFERENCES Users(id) ON DELETE CASCADE | ID of the user who owns the cycle         |
-| created_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the cycle was created      |
-| updated_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the cycle was last updated |
+| Column     | Data Type | Constraints                           | Description                                      |
+| ---------- | --------- | ------------------------------------- | ------------------------------------------------ |
+| id         | INT       | PRIMARY KEY, AUTO_INCREMENT, NOT NULL | Unique identifier for the cycle                  |
+| completed  | BOOLEAN   | NOT NULL, DEFAULT FALSE               | Status indicating whether the cycle is completed |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP   | Timestamp when the cycle was created             |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP   | Timestamp when the cycle was last updated        |
+| user_id    | UUID      | FOREIGN KEY, NOT NULL                 | Reference to the user who owns the cycle         |
 
 ### Sessions Table
 Stores information about individual Pomodoro sessions.
 
-| Column     | Data Type | Constraints                                                   | Description                                                   |
-| ---------- | --------- | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| id         | UUID      | PRIMARY KEY                                                   | Unique identifier for the session                             |
-| cycle_id   | UUID      | NOT NULL, FOREIGN KEY REFERENCES Cycles(id) ON DELETE CASCADE | ID of the cycle to which the session belongs                  |
-| status     | VARCHAR   | NOT NULL                                                      | Status of the session (e.g., "active", "paused", "completed") |
-| start_time | TIMESTAMP | NOT NULL                                                      | Timestamp when the session started                            |
-| end_time   | TIMESTAMP |                                                               | Timestamp when the session ended                              |
-| created_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                           | Timestamp when the session was created                        |
-| updated_at | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                           | Timestamp when the session was last updated                   |
+| Column     | Data Type | Constraints                           | Description                                                     |
+| ---------- | --------- | ------------------------------------- | --------------------------------------------------------------- |
+| id         | INT       | PRIMARY KEY, AUTO_INCREMENT, NOT NULL | Unique identifier for the session                               |
+| start_time | TIMESTAMP | NULLABLE                              | Start time of the session                                       |
+| end_time   | TIMESTAMP | NULLABLE                              | End time of the session                                         |
+| stop_time  | TIMESTAMP | NULLABLE                              | Time when the session was paused                                |
+| duration   | INT       | NOT NULL                              | Duration of the session in minutes                              |
+| status     | ENUM      | NOT NULL, DEFAULT 'pending'           | Status of the session (pending, in_progress, paused, completed) |
+| type       | ENUM      | NOT NULL                              | Type of the session (work, shortBreak, longBreak)               |
+| cycle_id   | INT       | FOREIGN KEY, NOT NULL                 | Reference to the cycle associated with this session             |
+| user_id    | UUID      | FOREIGN KEY, NOT NULL                 | Reference to the user associated with this session              |
 
 ### Configurations Table
 Stores user-specific configuration settings for Pomodoro intervals.
 
-| Column              | Data Type | Constraints                                                  | Description                                       |
-| ------------------- | --------- | ------------------------------------------------------------ | ------------------------------------------------- |
-| id                  | UUID      | PRIMARY KEY                                                  | Unique identifier for the configuration           |
-| user_id             | UUID      | NOT NULL, FOREIGN KEY REFERENCES Users(id) ON DELETE CASCADE | ID of the user who owns the configuration         |
-| work_interval       | INTEGER   | NOT NULL                                                     | Duration of the work interval (in minutes)        |
-| short_break         | INTEGER   | NOT NULL                                                     | Duration of the short break (in minutes)          |
-| long_break          | INTEGER   | NOT NULL                                                     | Duration of the long break (in minutes)           |
-| long_break_interval | INTEGER   | NOT NULL                                                     | Number of work intervals before a long break      |
-| created_at          | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the configuration was created      |
-| updated_at          | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP                          | Timestamp when the configuration was last updated |
+| Column              | Data Type | Constraints                           | Description                                              |
+| ------------------- | --------- | ------------------------------------- | -------------------------------------------------------- |
+| id                  | INT       | PRIMARY KEY, AUTO_INCREMENT, NOT NULL | Unique identifier for the configuration                  |
+| work_interval       | INT       | NOT NULL                              | Duration of work intervals in minutes                    |
+| short_break         | INT       | NOT NULL                              | Duration of short breaks in minutes                      |
+| long_break          | INT       | NOT NULL                              | Duration of long breaks in minutes                       |
+| long_break_interval | INT       | NOT NULL                              | Number of work intervals before a long break             |
+| created_at          | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP   | Timestamp when the configuration was created             |
+| updated_at          | TIMESTAMP | NOT NULL, DEFAULT CURRENT_TIMESTAMP   | Timestamp when the configuration was last updated        |
+| user_id             | UUID      | FOREIGN KEY, NOT NULL                 | Reference to the user associated with this configuration |
 
 ## Relationships
 
 - **User and Cycles:**
   - One-to-Many relationship.
   - Each user can have multiple cycles.
+
+- **User and Sessions:**
+  - One-to-Many relationship.
+  - Each user can have multiple sessions.
 
 - **Cycle and Sessions:**
   - One-to-Many relationship.
