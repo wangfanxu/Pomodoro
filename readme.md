@@ -23,6 +23,8 @@ docker-compose up
 
 Application will be running on 3000, or sql on 5432
 
-### endpoints && testing
-1. all endpoint can be find from *.http files
-2. open from vscode and click send request 
+### endpoints
+all endpoint can be find from *.http files
+
+### unit test
+yarn run test
