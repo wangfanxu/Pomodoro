@@ -13,8 +13,7 @@ Configurable Timers: Users can set and update timer configurations.
 
 ## Getting Started
 ### Prerequisites
-Node.js
-PostgreSQL
+Docker
 
 ### Installation
 1. Clone the repository
