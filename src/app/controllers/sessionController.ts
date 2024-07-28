@@ -1,9 +1,7 @@
 import { getSessionById } from "./../repositories/sessionRepository";
-import { IncomingMessage, ServerResponse } from "http";
 import { HTTP_CODES } from "../const/serverModel";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import {
-  CreateSession,
   createSessionSchema,
   updateSessionParamSchema,
   updateSessionSchema,
@@ -18,18 +16,21 @@ export const createSession = async (req: Request, res: Response) => {
   try {
     const parsedRequestBody = createSessionSchema.parse(req.body);
     await handleCreateSession(parsedRequestBody);
+    res.status(HTTP_CODES.CREATED).send();
+    return;
   } catch (error) {
     if (error instanceof ZodError) {
-      res.status(400).json({
+      res.status(HTTP_CODES.BAD_REQUEST).json({
         status: "error",
         message: "Validation error",
         errors: error.errors,
       });
       return;
+    } else {
+      res.status(HTTP_CODES.INTERNAL_SERVER_ERROR).send();
+      return;
     }
   }
-
-  res.status(HTTP_CODES.CREATED).send();
 };
 
 export const getSession = async (req: Request, res: Response) => {
@@ -39,11 +40,16 @@ export const getSession = async (req: Request, res: Response) => {
       message: "id is required",
     });
   }
-  const session = await getSessionById(Number(req.params.sessionId));
-  res.status(HTTP_CODES.OK).json({
-    status: "success",
-    ...session,
-  });
+  try {
+    const session = await getSessionById(Number(req.params.sessionId));
+    res.status(HTTP_CODES.OK).json({
+      status: "success",
+      ...session,
+    });
+  } catch (e) {
+    res.status(HTTP_CODES.INTERNAL_SERVER_ERROR).send();
+    return;
+  }
 };
 
 export const updateSessionStatus = async (req: Request, res: Response) => {
@@ -68,18 +74,21 @@ export const updateSessionStatus = async (req: Request, res: Response) => {
       sessionId,
       parsedRequestBody.status
     );
-    console.log("finished exuection", handleUpdateSession);
+    res.status(HTTP_CODES.OK).json({
+      status: "success",
+    });
+    return;
   } catch (error) {
     if (error instanceof ZodError) {
-      res.status(400).json({
+      res.status(HTTP_CODES.BAD_REQUEST).json({
         status: "error",
         message: "Validation error",
         errors: error.errors,
       });
       return;
+    } else {
+      res.status(HTTP_CODES.INTERNAL_SERVER_ERROR).send();
+      return;
     }
   }
-  res.status(HTTP_CODES.OK).json({
-    status: "success",
-  });
 };
