@@ -201,17 +201,3 @@ export async function startNextSession(
       break;
   }
 }
-
-// function getSessionDuration(
-//   sessionType: "work" | "short_break" | "long_break",
-//   configuration: Configuration
-// ) {
-//   switch (sessionType) {
-//     case "work":
-//       return configuration.workInterval;
-//     case "short_break":
-//       return configuration.shortBreak;
-//     case "long_break":
-//       return configuration.longBreak;
-//   }
-// }
