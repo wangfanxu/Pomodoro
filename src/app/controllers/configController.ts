@@ -6,9 +6,9 @@ import { HTTP_CODES } from "../const/serverModel";
 export const setUserConfiguration = async (req: Request, res: Response) => {
   const userId = req.params.userId;
   if (!userId) throw Error("user id is required");
-  const parsedRequestBody = configurationSchema.parse(req.body);
-
   try {
+    const parsedRequestBody = configurationSchema.parse(req.body);
+
     const configuration = await updateConfiguration(
       Number(userId),
       parsedRequestBody

@@ -61,7 +61,7 @@ const resumeSession = async (
     getSessionById(sessionId),
   ]);
 
-  console.log("retrieved cycle",cycle)
+  console.log("retrieved cycle", cycle);
   if (
     !session ||
     !session.endTime ||
@@ -85,7 +85,7 @@ const resumeSession = async (
 
   // Save the updated session
 
-  console.log("before update session")
+  console.log("before update session");
   await updateSession(sessionId, {
     endTime: newEndingTime,
     status: "in_progress",
@@ -132,10 +132,9 @@ export const handleCreateSession = async (session: CreateSession) => {
   //check is there any existing cycle
 
   let cycle = await getUserUncompletedCycles(user.id);
-  console.log("retrieved cycle");
   if (!cycle) {
     cycle = await createCycle(user);
-    console.log("created cycle");
+    console.log("create cycle with user", user);
   }
   const createdSession = await createSessionBySessionType(
     user,
