@@ -35,7 +35,7 @@ export const scheduleCountdownJob = (
       status: "completed",
     });
     startNextSession(user, cycle, session);
-    sendNotification(session.user.id, `${session.user.id} times up!`);
+    sendNotification(session.user.id, `times up for your current session!`);
     // Send notification to user
     delete jobManager[session.id];
   });
