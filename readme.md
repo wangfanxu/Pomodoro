@@ -16,15 +16,27 @@ Configurable Timers: Users can set and update timer configurations.
 Docker
 
 ### Installation
-1. Clone the repository
-
-2. Bring up the docker compose
+>1. Clone the repository
+>2. Bring up the docker compose
+```console
 docker-compose up
+```
 
 Application will be running on 3000, or sql on 5432
+
+**WARNING**
+By default once application is up, all the table are empty.
+You have to insert the testing users&configurations into tables
+There is a **init.sql** included in this repo, you can simply execute it from postgresql.
 
 ### endpoints
 all endpoint can be find from *.http files
 
-### unit test
+### testing
+**unit test**
+```console
 yarn run test
+```
+
+**API test**
+execute the .http files
