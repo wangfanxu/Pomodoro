@@ -16,8 +16,8 @@ This project is a Pomodoro Timer application built with Node.js, TypeScript, Typ
 Docker
 
 ### Installation
->1. Clone the repository
->2. Bring up the docker compose
+1. Clone the repository
+2. Bring up the docker compose
 ```console
 docker-compose up
 ```
@@ -33,10 +33,11 @@ There is a **init.sql** included in this repo, you can simply execute it from po
 all endpoint can be find from *.http files
 
 ### testing
-**unit test**
+unit test
+
 ```console
 yarn run test
 ```
 
-**API test**
+API test
 execute the .http files
