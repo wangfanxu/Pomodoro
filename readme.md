@@ -11,6 +11,16 @@ This project is a Pomodoro Timer application built with Node.js, TypeScript, Typ
 6. Database Integration: Persistent storage using PostgreSQL and TypeORM.
 7. Configurable Timers: Users can set and update timer configurations.
 
+## API Design
+There are total 4 endpoints included:
+1. create session: `POST /sessions`
+2. Get a session: `GET /users/:userId/cycles/:cycleId/sessions/:sessionId`
+3. Update session status, paused or resume: `PATCH /users/:userId/cycles/:cycleId/sessions/:sessionId/status`
+4. Update user configuration: `/users/:userId/configurations`
+
+## Database Design
+
+
 ## Getting Started
 ### Prerequisites
 Docker
