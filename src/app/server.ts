@@ -13,7 +13,6 @@ dotenv.config();
 
 (async () => {
   try {
-    console.log("env", process.env);
     await ConnectionManager.getInstance();
     console.log("Database connection established");
 

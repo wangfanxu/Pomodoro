@@ -13,7 +13,6 @@ wss.on("connection", (ws: WebSocket, request: IncomingMessage) => {
 
   // Store the WebSocket connection
   userSockets.set(userId, ws);
-  console.log(userSockets);
   ws.send("hello I am the server!");
 
   ws.on("close", () => {

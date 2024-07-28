@@ -44,8 +44,6 @@ export const createSessionBySessionType = async (
       duration = userWithConfiguration.configuration.longBreak;
   }
 
-  console.log("duration", duration);
-
   const session = new Session();
   const connection = await ConnectionManager.getInstance();
   const sessionRepo = connection.getRepository(Session);

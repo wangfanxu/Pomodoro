@@ -34,7 +34,6 @@ export const createSession = async (req: Request, res: Response) => {
 };
 
 export const getSession = async (req: Request, res: Response) => {
-  console.log("get session executed");
   if (!req.params.sessionId) {
     res.status(400).json({
       status: "error",
@@ -55,8 +54,6 @@ export const getSession = async (req: Request, res: Response) => {
 
 export const updateSessionStatus = async (req: Request, res: Response) => {
   try {
-    console.log("request params", req.params);
-
     const parsedRequestParams = updateSessionParamSchema.parse(req.params);
     const parsedRequestBody = updateSessionSchema.parse(req.body);
 

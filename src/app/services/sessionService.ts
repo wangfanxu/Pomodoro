@@ -38,7 +38,6 @@ const stopSession = async (
     `stopping session for user ${userId},cycleId,${_cycleId} for session ${sessionId}`
   );
   const session = await getSessionById(sessionId);
-  console.log("retrieved session", session);
   if (!session) throw Error(`invalid session id ${sessionId}`);
 
   try {
@@ -46,8 +45,6 @@ const stopSession = async (
   } catch (e) {
     console.error("error catch!");
   }
-
-  console.log("execution finished");
 };
 
 const resumeSession = async (
@@ -61,7 +58,6 @@ const resumeSession = async (
     getSessionById(sessionId),
   ]);
 
-  console.log("retrieved cycle", cycle);
   if (
     !session ||
     !session.endTime ||
@@ -69,7 +65,6 @@ const resumeSession = async (
     session.status !== "paused" ||
     !cycle
   ) {
-    console.log("error throwing");
     throw Error(
       "unable resume session due to session is possible not stop yet"
     );
@@ -84,8 +79,6 @@ const resumeSession = async (
   session.stopTime = null; // Clear stopTime since session is resumed
 
   // Save the updated session
-
-  console.log("before update session");
   await updateSession(sessionId, {
     endTime: newEndingTime,
     status: "in_progress",
@@ -106,35 +99,25 @@ export const handleUpdateSession = async (
   cycleId: number,
   sessionId: number,
   status: "resume" | "paused"
-) => {
-  console.log("handler running");
-  return await updateSessionHandler[status](userId, cycleId, sessionId);
-};
+) => await updateSessionHandler[status](userId, cycleId, sessionId);
 
 export const handleCreateSession = async (session: CreateSession) => {
   const user = await getUserWithConfiguration(session.userId);
-  console.log("user", user);
 
   if (!user) {
-    console.log("cannot find user");
     throw Error(`unable find user with userId ${session.userId}`);
   }
 
   if (!user.configuration) {
     //use default configuration
-    console.log("setting default configuration", defaultConfiguration);
     user.configuration = defaultConfiguration;
   }
-
-  //create session
-  console.log("before create session");
 
   //check is there any existing cycle
 
   let cycle = await getUserUncompletedCycles(user.id);
   if (!cycle) {
     cycle = await createCycle(user);
-    console.log("create cycle with user", user);
   }
   const createdSession = await createSessionBySessionType(
     user,
@@ -153,17 +136,13 @@ export async function startNextSession(
 ) {
   //do nothing if cycle already completed
   if (cycle.completed) return;
-  console.log("cycle", cycle);
   const sessions = await getSessionsByCycle(cycle);
-
-  console.log("retrieved sessions", sessions);
 
   switch (lastSession.type) {
     case "work":
       const numberOfWorkCompleted = sessions.filter(
         (session) => (session.type = "work")
       ).length;
-      console.log("length of works", numberOfWorkCompleted);
       if (numberOfWorkCompleted >= user.configuration.longBreakInterval) {
         const createdSession = await createSessionBySessionType(
           user,

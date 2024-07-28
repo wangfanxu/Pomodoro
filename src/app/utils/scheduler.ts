@@ -30,7 +30,7 @@ export const scheduleCountdownJob = (
 
   // Schedule the job
   const job = cron.schedule(cronTime, async () => {
-    console.log("start job execute");
+    console.log("cron task start execute");
     await updateSession(session.id, {
       status: "completed",
     });

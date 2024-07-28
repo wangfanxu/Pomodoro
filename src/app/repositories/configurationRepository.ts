@@ -5,7 +5,6 @@ export const updateConfiguration = async (
   userId: number,
   updateData: Partial<Configuration>
 ) => {
-  console.log("update", userId, updateData);
   const connection = await ConnectionManager.getInstance();
   const configurationRepo = connection.getRepository(Configuration);
 
@@ -15,8 +14,6 @@ export const updateConfiguration = async (
       id: userId,
     },
   });
-
-  console.log("configuration", existingConfig);
 
   if (!existingConfig) {
     throw new Error("Configuration not found");
