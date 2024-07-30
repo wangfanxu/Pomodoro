@@ -1,6 +1,5 @@
 // src/websocket.ts
 import WebSocket, { WebSocketServer } from "ws";
-import { Request } from "express";
 import { IncomingMessage } from "http";
 
 const wss = new WebSocketServer({ port: 8785 });

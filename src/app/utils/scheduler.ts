@@ -1,10 +1,6 @@
 import cron, { ScheduledTask } from "node-cron";
-// import notifier from "node-notifier";
 import { Session } from "../entities/Session";
-import {
-  getSessionById,
-  updateSession,
-} from "../repositories/sessionRepository";
+import { updateSession } from "../repositories/sessionRepository";
 import { userSockets } from "../websocket";
 import { User } from "../entities/User";
 import { Cycle } from "../entities/Cycle";
@@ -68,7 +64,7 @@ export async function resumeJob(user: User, session: Session, cycle: Cycle) {
   const remainingDuration =
     (session.endTime.getTime() - session.stopTime.getTime()) / 1000;
   if (remainingDuration > 0) {
-    // scheduleCountdownJob({ ...session, duration: remainingDuration });
+    scheduleCountdownJob(user, cycle, session);
   } else {
     throw new Error("Session has already ended or has negative remaining time");
   }
@@ -84,28 +80,3 @@ export function sendNotification(userId: number, message: string) {
     ws.send(message);
   }
 }
-
-// Function to send notification to user
-// function sendNotification(user: User, session: Session) {
-//   notifier.notify({
-//     title: "Pomodoro Timer",
-//     message: `Your session has ended. Time to take a break!`,
-//   });
-// }
-
-// // Usage example
-// createNewSession(1, 25 * 60) // 25 minutes
-//   .then((session) => {
-//     console.log("New session created:", session);
-//   })
-//   .catch((error) => {
-//     console.error(error);
-//   });
-
-// // Example stopping and resuming a job
-// setTimeout(() => {
-//   stopJob(1); // Stop job with session ID 1
-//   setTimeout(() => {
-//     resumeJob(1); // Resume job with session ID 1 after 10 seconds
-//   }, 10000);
-// }, 10000);

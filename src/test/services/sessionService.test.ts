@@ -18,9 +18,17 @@ import * as userRepository from "../../app/repositories/userRepository";
 import * as cycleRepository from "../../app/repositories/cycleRepository";
 import * as sessionRepository from "../../app/repositories/sessionRepository";
 import * as scheduler from "../../app/utils/scheduler";
+// Mock dependencies
+jest.mock("../../app/websocket", () => ({
+  userSockets: {
+    get: jest.fn().mockReturnValue({
+      send: jest.fn(),
+    }),
+  },
+}));
 
 describe("session service test suites", () => {
-  let sessionStub: any = {
+  let sessionStub = {
     userId: 9999999,
     sessionType: "work",
   };
@@ -99,14 +107,14 @@ describe("session service test suites", () => {
   describe("create session handler test suite", () => {
     it("if the provided id is unable to find user, should throw error", async () => {
       getUserWithConfigurationSpy.mockResolvedValueOnce(null);
-      await expect(handleCreateSession(sessionStub)).rejects.toThrow();
+      await expect(handleCreateSession(sessionStub as any)).rejects.toThrow();
     });
 
     it("if the cycle does not exist, should create a cycle", async () => {
       getUserWithConfigurationSpy.mockResolvedValueOnce(userStub);
       getUserUncompletedCyclesSpy.mockResolvedValueOnce(null);
 
-      await handleCreateSession(sessionStub);
+      await handleCreateSession(sessionStub as any);
 
       expect(createCycleSpy).toHaveBeenCalled();
       expect(createCycleSpy).toHaveBeenCalledWith(userStub);
@@ -116,7 +124,7 @@ describe("session service test suites", () => {
       getUserWithConfigurationSpy.mockResolvedValueOnce(userStub);
       getUserUncompletedCyclesSpy.mockResolvedValueOnce(cycleStub);
 
-      await handleCreateSession(sessionStub);
+      await handleCreateSession(sessionStub as any);
 
       expect(createSessionBySessionTypeSpy).toHaveBeenCalled();
       expect(createSessionBySessionTypeSpy).toHaveBeenCalledWith(
@@ -131,7 +139,7 @@ describe("session service test suites", () => {
       getUserUncompletedCyclesSpy.mockResolvedValueOnce(cycleStub);
       createSessionBySessionTypeSpy.mockResolvedValueOnce(sessionEntityStub);
 
-      await handleCreateSession(sessionStub);
+      await handleCreateSession(sessionStub as any);
 
       expect(countDownSchedulerSpy).toHaveBeenCalled();
       expect(countDownSchedulerSpy).toHaveBeenCalledWith(
@@ -231,15 +239,5 @@ describe("session service test suites", () => {
       );
       expect(countDownSchedulerSpy).toHaveBeenCalled();
     });
-
-    // it("should mark the cycle as completed after a long break", async () => {
-    //   sessionEntityStub.type = "longBreak";
-
-    //   await startNextSession(userStub, cycleStub, sessionEntityStub);
-
-    //   expect(updateCycleSpy).toHaveBeenCalledWith(cycleStub.id, {
-    //     completed: true,
-    //   });
-    // });
   });
 });

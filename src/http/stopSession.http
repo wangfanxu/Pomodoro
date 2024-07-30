@@ -1,4 +1,4 @@
-PATCH  http://localhost:3000/users/1/cycles/1/sessions/5/status HTTP/1.1
+PATCH  http://localhost:3000/users/1/cycles/1/sessions/1/status HTTP/1.1
 content-type: application/json
 
 {
